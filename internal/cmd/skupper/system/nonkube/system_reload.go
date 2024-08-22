@@ -1,7 +1,9 @@
 package nonkube
 
 import (
+	"errors"
 	"fmt"
+
 	"github.com/skupperproject/skupper/api/types"
 	"github.com/skupperproject/skupper/internal/config"
 	"github.com/skupperproject/skupper/pkg/nonkube/api"
@@ -34,14 +36,12 @@ func (cmd *CmdSystemReload) NewClient(cobraCommand *cobra.Command, args []string
 	cmd.Platform = cobraCommand.Flag("platform").Value.String()
 }
 
-func (cmd *CmdSystemReload) ValidateInput(args []string) []error {
-	var validationErrors []error
-
-	if args != nil && len(args) > 0 {
-		validationErrors = append(validationErrors, fmt.Errorf("this command does not accept arguments"))
+func (cmd *CmdSystemReload) ValidateInput(args []string) error {
+	if len(args) > 0 {
+		return errors.New("this command does not accept arguments")
 	}
 
-	return validationErrors
+	return nil
 }
 
 func (cmd *CmdSystemReload) InputToOptions() {

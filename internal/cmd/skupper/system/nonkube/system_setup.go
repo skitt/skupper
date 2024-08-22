@@ -1,7 +1,11 @@
 package nonkube
 
 import (
+	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/skupperproject/skupper/api/types"
 	"github.com/skupperproject/skupper/internal/cmd/skupper/common"
 	"github.com/skupperproject/skupper/internal/config"
@@ -9,8 +13,6 @@ import (
 	"github.com/skupperproject/skupper/pkg/nonkube/api"
 	"github.com/skupperproject/skupper/pkg/nonkube/bootstrap"
 	"github.com/spf13/cobra"
-	"os"
-	"path/filepath"
 )
 
 type CmdSystemSetup struct {
@@ -39,7 +41,7 @@ func (cmd *CmdSystemSetup) NewClient(cobraCommand *cobra.Command, args []string)
 	cmd.Platform = cobraCommand.Flag("platform").Value.String()
 }
 
-func (cmd *CmdSystemSetup) ValidateInput(args []string) []error {
+func (cmd *CmdSystemSetup) ValidateInput(args []string) error {
 	var validationErrors []error
 
 	if args != nil && len(args) > 0 {
@@ -78,7 +80,7 @@ func (cmd *CmdSystemSetup) ValidateInput(args []string) []error {
 		}
 	}
 
-	return validationErrors
+	return errors.Join(validationErrors...)
 }
 
 func (cmd *CmdSystemSetup) InputToOptions() {
