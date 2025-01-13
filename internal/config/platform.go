@@ -13,6 +13,7 @@ import (
 	"github.com/skupperproject/skupper/api/types"
 	"github.com/skupperproject/skupper/pkg/utils"
 	"gopkg.in/yaml.v3"
+	"k8s.io/utils/ptr"
 )
 
 type PlatformInfo struct {
@@ -131,8 +132,13 @@ var (
 )
 
 var (
-	Platform string
+	Platform           string
+	configuredPlatform *types.Platform
 )
+
+func ClearPlatform() {
+	configuredPlatform = nil
+}
 
 // GetPlatform returns the runtime platform defined,
 // where the lookup goes through the following sequence:
@@ -143,6 +149,10 @@ var (
 // In case the defined platform is invalid, "kubernetes"
 // will be returned.
 func GetPlatform() types.Platform {
+	if configuredPlatform != nil {
+		return *configuredPlatform
+	}
+
 	p := &PlatformInfo{}
 	var platform types.Platform
 	_ = p.Load()
@@ -165,14 +175,15 @@ func GetPlatform() types.Platform {
 	}
 	switch platform {
 	case types.PlatformPodman:
-		return types.PlatformPodman
+		configuredPlatform = &platform
 	case types.PlatformDocker:
-		return types.PlatformDocker
+		configuredPlatform = &platform
 	case types.PlatformSystemd:
-		return types.PlatformSystemd
+		configuredPlatform = &platform
 	default:
-		return types.PlatformKubernetes
+		configuredPlatform = ptr.To(types.PlatformKubernetes)
 	}
+	return *configuredPlatform
 }
 
 func getDataHome() string {

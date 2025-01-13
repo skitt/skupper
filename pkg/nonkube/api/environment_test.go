@@ -182,6 +182,7 @@ func TestGetPlatform(t *testing.T) {
 				assert.Assert(t, info.Update(tt.cfgVal), "error setting platform in %s", f.Name())
 			}
 
+			config.ClearPlatform()
 			got := config.GetPlatform()
 
 			// removing temporary file

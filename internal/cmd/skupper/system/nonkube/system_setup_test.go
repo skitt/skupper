@@ -2,15 +2,17 @@ package nonkube
 
 import (
 	"fmt"
-	"github.com/skupperproject/skupper/api/types"
-	"github.com/skupperproject/skupper/internal/cmd/skupper/common"
-	"github.com/skupperproject/skupper/internal/cmd/skupper/common/utils"
-	"github.com/skupperproject/skupper/pkg/nonkube/api"
-	"github.com/skupperproject/skupper/pkg/nonkube/bootstrap"
-	"gotest.tools/v3/assert"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/skupperproject/skupper/api/types"
+	"github.com/skupperproject/skupper/internal/cmd/skupper/common"
+	"github.com/skupperproject/skupper/internal/cmd/skupper/common/utils"
+	"github.com/skupperproject/skupper/internal/config"
+	"github.com/skupperproject/skupper/pkg/nonkube/api"
+	"github.com/skupperproject/skupper/pkg/nonkube/bootstrap"
+	"gotest.tools/v3/assert"
 )
 
 func TestCmdSystemSetup_ValidateInput(t *testing.T) {
@@ -113,6 +115,7 @@ func TestCmdSystemSetup_InputToOptions(t *testing.T) {
 	for _, test := range testTable {
 		t.Run(test.name, func(t *testing.T) {
 			os.Setenv(types.ENV_PLATFORM, test.platform)
+			config.ClearPlatform()
 
 			cmd := newCmdSystemSetupWithMocks(false, false)
 			cmd.Flags = &test.flags
